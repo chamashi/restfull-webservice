@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="ISO-8859-1">
+<title>Product Manager</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" 
+integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+<style>
+	.navbar {
+		margin-bottom: 20px;
+	}
+	
+	h1 {
+		color: #333;
+		font-size: 24px;
+	}
+	
+	.table {
+		margin-top: 20px;
+		width: 100%;
+	}
+
+	.table th {
+		font-weight: bold;
+		background-color: #333;
+		color: #fff;
+	}
+
+	.table td {
+		border-bottom: 1px solid #ccc;
+		padding: 8px;
+	}
+
+	.table td a {
+		margin-right: 10px;
+		color: #333;
+		text-decoration: none;
+	}
+</style>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-primary">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+					aria-controls="navbar">
+					<span class="sr-only"></span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#" th:href="@{/logout}">
+					Log out</a>
+					
+			</div>
+		</div>
+	</nav>
+
+<div align="center">	
+	<div sec:authorize="isAuthenticated()">
+		<h1>Welcome <b><span sec:authentication="name">Username</span></b></h1>
+		&nbsp;
+		<i><span sec:authentication="principal.authorities">Roles</span></i>
+	</div>
+	
+	<div sec:authorize="hasAnyAuthority('USER','ADMIN')">
+		<a href="new">Add customer</a>
+	</div>
+	<div sec:authorize="hasAnyAuthority('USER','ADMIN')">
+		<a href="newp">Add product</a>
+	</div>
+	
+	<br/><br/>
+	
+	    <table class="table">
+       <thead class="thead-dark">
+        <tr>
+          <th scope="col">Customer ID</th>
+          <th scope="col">Full Name</th>
+          <th scope="col">Email</th>
+			<th sec:authorize="hasAnyAuthority('USER','ADMIN')">Actions</th>				
+				
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="customer : ${listCustomer}">
+				<td th:text="${customer.id}">Customer ID</td>
+				<td th:text="${customer.fullname}"> full Name</td>
+				<td th:text="${customer.email}">email</td>
+				
+				
+				<td sec:authorize="hasAnyAuthority('ADMIN', 'USER')">
+					<a th:href="@{'/edit/' + ${customer.id}}">Edit</a>			
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<a sec:authorize="hasAuthority('ADMIN')" th:href="@{'/delete/' + ${customer.id}}">Delete</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+</body>
+</html>
